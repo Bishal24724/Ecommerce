@@ -72,7 +72,7 @@ class MainController extends Controller
     }
 
     public function shop(){
-        $allproducts = Product::orderBy('id', 'desc')->simplePaginate(2);
+        $allproducts = Product::orderBy('id', 'desc')->simplePaginate(5);
 
         return view('shop',compact('allproducts'));
     }
