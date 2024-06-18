@@ -27,19 +27,19 @@
                            <p>{{ session()->get('error')}}</p>
                           </div>
                        @endif
-                        <form action=" {{URL::to('loginUser')}}" method="POST" w>
+                        <form action=" {{URL::to('loginUser')}}" method="POST">
                             @csrf
                             <div class="row">
                                
                                 <div class="col-lg-12">
-                                    <input type="email" name="email" placeholder="Email" required>
+                                    <input type="email" name="email" placeholder="Email" value="{{ old('email') }}"  @error('email') is-invalid @enderror  required>
                                     @error('email')
                             <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
                                 </div>
                            
                                 <div class="col-lg-12">
-                                    <input type="password" placeholder="password" name="password" required>
+                                    <input type="password" placeholder="password" name="password"  required>
                                     @error('password')
                             <div class="alert alert-danger">{{ $message }}</div>
                         @enderror

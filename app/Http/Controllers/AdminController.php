@@ -7,11 +7,51 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\VendorUser;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+//use App\Http\Controller\VendorController;
 
 class AdminController extends Controller
 {
+    public function loginadmin(Request $data){
+        $data->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|min:8',
+        ]);
+
+        $user = User::where('email', $data->input('email'))->first();
+
+        if ($user && Hash::check($data->input('password'), $user->password)) {
+         
+            /*
+            Session::put('id', $user->id); // user id is saved for further
+            Session::put('type', $user->type); // user type is saved for further
+            */
+            session([
+                'id' => $user->id,
+                'type' => $user->type,
+                'picture' => $user->picture 
+            ]);
+    
+
+            if ($user->type == 'Admin') {
+               
+                return redirect('/admin');
+            }
+            
+            else {
+             
+                return redirect()->back()->with('error', 'Invalid Credentials');
+            }
+
+        } else {
+          
+            return redirect()->back()->with('error', 'Invalid Credentials');
+        }
+
+    }
     public function index(){
         if(session()->get('type')=='Admin'){
             return view('Dashboard.index'); 
@@ -27,13 +67,20 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
-    public function products(){
-        if(session()->get('type')=='Admin'){
-            $products = Product::all();
-            return view('Dashboard.products', compact('products')); 
+    public function products() {
+        if(session()->get('type') == 'Admin') {
+        $vendor=VendorUser::get();
+
+        
+            $products = Product::join('vendor_users', 'products.vid', '=', 'vendor_users.id')
+                ->select('products.*', 'vendor_users.name as vendor_name')
+                ->get();
+    
+            return view('Dashboard.products', compact('products','vendor')); 
         }
         return redirect()->back();
     }
+    
 
     public function customers(){
         if(session()->get('type')=='Admin'){
@@ -42,7 +89,7 @@ class AdminController extends Controller
         }
         return redirect()->back();
     }
-
+/*
     public function deleteProduct($id){
         if(session()->get('type')=='Admin'){
             $product = Product::find($id);
@@ -51,6 +98,7 @@ class AdminController extends Controller
         }
         return redirect()->back();
     }
+        */
 
     public function changeUserStatus($status, $id){
         if(session()->get('type')=='Admin'){
@@ -66,6 +114,24 @@ class AdminController extends Controller
         if(session()->get('type')=='Admin'){
             $order = Order::find($id);
             $order->status = $status;
+            
+
+            if($status=='Delivered'){
+                
+                $orderItems = OrderItem::where('orderId', $id)->get();
+               foreach ($orderItems as $item) {
+                // this will search for the product where product id is match with the productId exist in the orders_items.
+                    $product = Product::find($item->productId);
+    
+                    if ($product) {
+                        // this will decrease the quantity of available products from the products table whose orders  status has been completed.
+                        $product->quantity -= $item->quantity;
+                        $product->save();
+                    }
+                }
+               
+                
+            }
             $order->save();
             return redirect()->back()->with('success', 'Order Status Updated Successfully');
         }
@@ -81,7 +147,8 @@ class AdminController extends Controller
                 'quantity' => 'required|integer',
                 'category' => 'required|string|max:255',
                 'description' => 'required|string',
-                'file' => 'required|file|mimes:jpeg,png,jpg,gif|max:2048'
+                'file' => 'required|file|mimes:jpeg,png,jpg,gif|max:2048',
+                'vendor'=>'required|integer'
             ]);
 
             $products = new Product();
@@ -93,6 +160,7 @@ class AdminController extends Controller
             $products->description = $data->input('description');
             $products->picture = $data->file('file')->getClientOriginalName();
             $data->file('file')->move('uploads/products/', $products->picture);
+            $products->vid = $data->input('vendor');
             $products->save();
 
             return redirect()->back()->with('success', 'New Product Added Successfully');
@@ -110,7 +178,8 @@ class AdminController extends Controller
                 'quantity' => 'required|integer',
                 'category' => 'required|string|max:255',
                 'description' => 'required|string',
-                'file' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048'
+                'file' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048',
+                'vendor'=>'nullable|integer'
             ]);
 
             $products = Product::find($data->input('id'));
@@ -124,6 +193,12 @@ class AdminController extends Controller
                 $products->picture = $data->file('file')->getClientOriginalName();
                 $data->file('file')->move('uploads/products/', $products->picture);
             }
+            if($data->input('vendor')!=null)
+            {
+            
+                  $products->vid=$data->input('vendor');
+            }
+          
 
             $products->save();
             return redirect()->back()->with('success', 'Product Updated Successfully');

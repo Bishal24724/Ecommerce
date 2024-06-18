@@ -13,7 +13,7 @@
                    
                  
                   <div class="table-responsive">
-                    <table class="table table-striped table-borderless">
+                    <table id="myTable"  class="table table-striped table-borderless">
                       <thead>
                         <tr>
                           <th>Customer</th>

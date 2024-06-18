@@ -9,17 +9,34 @@
             <div class="col-md-12 grid-margin stretch-card">
               <div class="card"> 
                 <div class="card-body">
-                 
+                      <div class="error-danger">
+                                 @if ($errors->any())
+                                 <div class="alert alert-danger">
+                                  
+                                    @foreach ($errors->all() as $error)
+                                    {{ $error }}
+                                    <br>
+                                    @endforeach
+                                    
+                                    </div>
+                                  
+                                    
+                      </div>
+                      @endif
                     <p class="card-title mb-0">Top Products</p>
+                    {{--
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNewModel">
                         Add New
                       </button>
+
+                      --}}
+
                       <div class="modal" id="addNewModel" >
                         <div class="modal-dialog" role="document">
                           <div class="modal-content">
 
                             <div class="modal-header">
-                              <h5 class="modal-title" >Add New Product</h5>
+                               <h5 class="modal-title" >Add New Product</h5> 
                               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                               </button>
@@ -73,6 +90,18 @@
                             @error('type')
                             <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
+                        <label for="">Vendor</label>
+                        <select name="vendor" class="form-control mb-2">
+                          <option value="">Select Type</option>
+                        @foreach ($vendor as $user)
+                        <option value="{{$user->id}}">{{$user->name}}</option>
+                            
+                        @endforeach
+                        
+                         </select>
+                         @error('vendor')
+                         <div class="alert alert-danger">{{ $message }}</div>
+                     @enderror
 
                        <input type="submit" value="Save" name="save" class="btn btn-success" id="">
                        
@@ -93,7 +122,7 @@
             });
             </script>
             @endif
-                    <table class="table table-striped table-borderless">
+                    <table  id="myTable" class="table display table-striped table-borderless">
                       <thead>
                         <tr>
                           <th>Title</th>
@@ -101,8 +130,10 @@
                           <th>Price</th>
                           <th>Quantity</th>
                           <th>Category</th>
+                          
                           <th>Type</th>
-                           <th>Update</th>
+                          <th>Vendor</th>
+                          {{-- <th>Update</th> --}}
                            <th>Delete</th>
                         </tr>  
                       </thead>
@@ -122,7 +153,9 @@
                             <td>{{ $item->quantity}}</td>
                             <td class="font-weight-medium"><div class="badge badge-success">{{$item ->category}}</div></td>
                             <td class="font-weight-medium"><div class="badge badge-info">{{$item ->type}}</div></td>
-                            <td class="font-weight-small">
+                            <td class="font-weight-medium"><div class="badge badge-dark">{{ $item->vendor_name}}</td>
+                         {{--   <td class="font-weight-small">
+                            
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModel{{ $i}}">
                                     Update
                                   </button>
@@ -141,17 +174,42 @@
                                         @csrf
                                         <label for="">Title</label>
                                         <input type="text" name="title"  value="{{ $item->title}}" class="form-control mb-2" placeholder="Enter Title"required>
+                                          @error('title')
+                                          <div class="alert alert-danger">{{ $message }}</div>
+                                              
+                                          @enderror
                                         <label for="">price</label>
                                         <input type="text" name="price" value="{{ $item->price}}" class="form-control mb-2" placeholder="Enter Price (NRS)"required>
+                                        @error('price')
+                                            <div class="alert alert-danger">{{ $message}}</div>
+                                            
+                                        @enderror
                                         <label for="">Quantity</label>
                                         <input type="text" name="quantity" value="{{ $item->quantity}}"  class="form-control mb-2" placeholder="Enter Quantity"required>
-                                        <label for="">Picture</label>
-                                        <input type="file" name="file" value="{{ $item->description}}"  class="form-control mb-2" >
-                                        
+                                        @error('quantity')
+                                            <div class="alert alert-danger">
+                                              {{ $message}}
+                                            </div>
+                                        @enderror
+                                        <label for="">Photo</label>
+                                        <input type="file" name="file" value="{{ $item->file}}"  class="form-control mb-2" >
+
+                                        @error('file')
+                                        <div class="alert alert-danger">
+                                          {{ $message}}
+                                        </div>
+                                    @enderror
+
                                         <label for="">Description</label>
 
                                         <input type="text" name="description" value="{{ $item->description}}"  class="form-control mb-2" placeholder="Enter Description"required>
                                         
+                                        @error('description')
+                                        <div class="alert alert-danger">
+                                          {{ $message}}
+                                        </div>
+                                    @enderror
+
                                         <label for="">Category</label>
                                        <select name="category" class="form-control mb-2 ">
                                         <option value="{{ $item->category}}" >{{ $item->category}}</option>
@@ -159,6 +217,12 @@
                                        <option value="Shoes">shoes</option>
                                        <option value="Clothes">Clothes</option>
                                         </select>
+                                        
+                                        @error('category')
+                                        <div class="alert alert-danger">
+                                          {{ $message}}
+                                        </div>
+                                    @enderror
                                         <label for="">Type</label>
                                        <select name="type" class="form-control mb-2">
                                         <option value="{{ $item->type}}">{{ $item->type}}</option>
@@ -166,6 +230,25 @@
                                        <option value="new-arrivals">New Arrivals</option>
                                        <option value="new-arrivals">Sale</option>
                                         </select>
+                                           
+                                        @error('type')
+                                        <div class="alert alert-danger">
+                                          {{ $message}}
+                                        </div>
+                                    @enderror
+                                        <label for="">Vendor</label>
+                                        <select name="vendor" class="form-control mb-2">
+                                          <option value="">Select Type</option>
+                                        @foreach ($vendor as $user)
+                                        <option value="{{$user->id}}">{{$user->name}}</option>
+                                            
+                                        @endforeach
+                                           
+                                        @error('vendor')
+                                        <div class="alert alert-danger">
+                                          {{ $message}}
+                                        </div>
+                                    @enderror
                                     <input type="hidden" name="id" value="{{ $item->id}}"  id="">
                                    <input type="submit" value="Save" name="save" class="btn btn-success" id="">
                                    
@@ -176,6 +259,7 @@
                                     </div>
                                   </div>
                             </td>
+                            --}}
                             <td>
                               <a href="{{ URL::to('deleteProduct/'.$item->id)}}" class="btn btn-danger">Delete</a>
                             </td>

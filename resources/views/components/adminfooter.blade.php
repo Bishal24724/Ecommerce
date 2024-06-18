@@ -35,6 +35,19 @@
 <script src="Dashboard/js/dashboard.js"></script>
 <script src="Dashboard/js/Chart.roundedBarCharts.js"></script>
 <!-- End custom js for this page-->
+<!-- datatable js cdn -->
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script type="text/javascript" src="jquery.dataTables.js"></script>
+<script type="text/javascript" src="dataTables.search.html.js"></script>
+<script type="text/javascript" src="jquery.dataTables.js"></script>
+<script type="text/javascript" src="dataTables.filter.range.js"></script>
+<script type="text/javascript">
+   $('#myTable').DataTable( {
+    select: true,
+    responsive: true
+} );
+
+</script>
 </body>
 
 </html>

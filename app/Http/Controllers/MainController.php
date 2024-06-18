@@ -50,9 +50,15 @@ class MainController extends Controller
             $order->address = $data->input('address');
             $order->fullname = $data->input('fullname');
             $order->phone = $data->input('phone');
+            $carts = Cart::where('customerId', session()->get('id'))->get();
+           foreach($carts as $cart){
+                   $product= Product::find($cart->productId);
+                  $order->vendor_id=$product->vid;
+           }
+        
 
             if ($order->save()) {
-                $carts = Cart::where('customerId', session()->get('id'))->get();
+               
                 foreach ($carts as $item) {
                     $product = Product::find($item->productId); 
                     $orderItem = new OrderItem();
@@ -60,6 +66,7 @@ class MainController extends Controller
                     $orderItem->quantity = $item->quantity;
                     $orderItem->price = $product->price; // Make sure to set the price correctly
                     $orderItem->orderId = $order->id;
+                    
                    
                     $orderItem->save();
                     $item->delete();
@@ -88,10 +95,23 @@ class MainController extends Controller
     public function myOrders(){
         if (session()->has('id')) {
             $orders = Order::where('customerId', session()->get('id'))->get();
+            $orders->each(function ($order) {
+                $order->vat = 0.13 * $order->bill;
+            });
+            $orders->each(function ($order) {
+                $order->total = $order->bill + $order->vat ;
+            });
+   
+        
             $items = DB::table('products')
                 ->join('order_items', 'order_items.productId', 'products.id')
                 ->select('products.title', 'products.picture',  'order_items.*')
                 ->get();
+                     
+              
+                   
+                   
+                
             return view('orders', compact('orders', 'items'));
         }
         return redirect('login');
@@ -99,7 +119,25 @@ class MainController extends Controller
 
     public function singleProduct($id){
         $product = Product::find($id);
-        return view('singleProduct', compact('product'));
+        $vendor = DB::table('products')
+        ->join('vendor_users', 'products.vid', '=', 'vendor_users.id')
+        ->select('vendor_users.name', 'vendor_users.address')
+        ->where('products.id', '=', $id)
+        ->first(); // Use first() instead of get() to directly get the first result
+
+    // Check if vendor data is available
+    if ($vendor) {
+        $vendor_name = $vendor->name;
+        $vendor_address = $vendor->address;
+    } else {
+        // Handle the case where no vendor was found, set default values or throw an error
+        $vendor_name = 'Vendor not found';
+        $vendor_address = 'Address not available';
+    }
+        
+        return view('singleProduct', compact('product', 'vendor_name','vendor_address'));
+      
+        //return view('singleProduct', compact('product'));
     }
 
     public function deleteCartItem($id){
@@ -169,20 +207,25 @@ class MainController extends Controller
             session([
                 'id' => $user->id,
                 'type' => $user->type,
-                'picture' => $user->picture // Ensure this is set correctly
+                'picture' => $user->picture 
             ]);
     
 
             if ($user->type == 'Customer') {
-                return redirect('/');
-            } else if ($user->type == 'Admin') {
-                return redirect('/admin');
-            } else {
+           
+                return redirect('/'); 
+            } 
+            
+            else {
+             
                 return redirect('login')->with('error', 'Invalid Credentials');
             }
+
         } else {
+          
             return redirect('login')->with('error', 'Invalid Credentials');
         }
+
     }
 
 

@@ -114,7 +114,7 @@
                         </div>
                         <div class="product__item__text">
                             <h6>{{$item->title}}</h6>
-                            <a href="{{ URL::to('AddNewProduct')}}"  class="add-cart">+ Add To Cart</a>
+                            <a href="{{ URL::to('addToCart')}}"  class="add-cart">+ Add To Cart</a>
                             <div class="rating">
                                 <i class="fa fa-star-o"></i>
                                 <i class="fa fa-star-o"></i>
