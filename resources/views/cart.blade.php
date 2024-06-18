@@ -112,7 +112,10 @@
                             <input type="text" name="phone" id="" class="form-control" mt-4  placeholder="Phone" required>
                             <input type="text" name="address" id="" class="form-control" mt-4 placeholder=" Address" required>
                             <input type="hidden" name="bill" value="{{ $total}}" class="form-control" mt-4 >
+<<<<<<< HEAD
                              <input type="hidden" name="" value="" class="form-control" mt-4>
+=======
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
                             <input type="submit" name="checkout" class="primary-btn mt-2 btn-block" value="Proceed to Checkout" >
                         </form>
                        

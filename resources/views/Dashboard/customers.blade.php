@@ -22,7 +22,11 @@
              
            
             <div class="table-responsive">
+<<<<<<< HEAD
               <table id="myTable" class="table display table-striped table-borderless">
+=======
+              <table class="table table-striped table-borderless">
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
                 <thead>
                   <tr>
                     <th>S.N</th>

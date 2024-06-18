@@ -25,7 +25,10 @@
                                     <th>Status</th>
                                     <th>Order Date</th>
                                     <th>View Products</th>
+<<<<<<< HEAD
                                     <th>Invoice/ Bill</th>
+=======
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
 
                                 </tr>
                             </thead>
@@ -133,6 +136,7 @@
     </div>
   </div>
                                               </td>
+<<<<<<< HEAD
                                               <td> 
                                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myinvoice{{ $i}}">
                                                     Invoice
@@ -302,6 +306,8 @@
                                                     </div>
                                                   </div>
                                               </td>
+=======
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
                                     </tr>
                                 @endforeach
                             </tbody>

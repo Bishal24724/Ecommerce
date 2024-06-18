@@ -50,6 +50,7 @@ class MainController extends Controller
             $order->address = $data->input('address');
             $order->fullname = $data->input('fullname');
             $order->phone = $data->input('phone');
+<<<<<<< HEAD
             $carts = Cart::where('customerId', session()->get('id'))->get();
            foreach($carts as $cart){
                    $product= Product::find($cart->productId);
@@ -59,6 +60,11 @@ class MainController extends Controller
 
             if ($order->save()) {
                
+=======
+
+            if ($order->save()) {
+                $carts = Cart::where('customerId', session()->get('id'))->get();
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
                 foreach ($carts as $item) {
                     $product = Product::find($item->productId); 
                     $orderItem = new OrderItem();
@@ -66,7 +72,10 @@ class MainController extends Controller
                     $orderItem->quantity = $item->quantity;
                     $orderItem->price = $product->price; // Make sure to set the price correctly
                     $orderItem->orderId = $order->id;
+<<<<<<< HEAD
                     
+=======
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
                    
                     $orderItem->save();
                     $item->delete();
@@ -95,6 +104,7 @@ class MainController extends Controller
     public function myOrders(){
         if (session()->has('id')) {
             $orders = Order::where('customerId', session()->get('id'))->get();
+<<<<<<< HEAD
             $orders->each(function ($order) {
                 $order->vat = 0.13 * $order->bill;
             });
@@ -103,15 +113,20 @@ class MainController extends Controller
             });
    
         
+=======
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
             $items = DB::table('products')
                 ->join('order_items', 'order_items.productId', 'products.id')
                 ->select('products.title', 'products.picture',  'order_items.*')
                 ->get();
+<<<<<<< HEAD
                      
               
                    
                    
                 
+=======
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
             return view('orders', compact('orders', 'items'));
         }
         return redirect('login');
@@ -119,6 +134,7 @@ class MainController extends Controller
 
     public function singleProduct($id){
         $product = Product::find($id);
+<<<<<<< HEAD
         $vendor = DB::table('products')
         ->join('vendor_users', 'products.vid', '=', 'vendor_users.id')
         ->select('vendor_users.name', 'vendor_users.address')
@@ -138,6 +154,9 @@ class MainController extends Controller
         return view('singleProduct', compact('product', 'vendor_name','vendor_address'));
       
         //return view('singleProduct', compact('product'));
+=======
+        return view('singleProduct', compact('product'));
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
     }
 
     public function deleteCartItem($id){
@@ -207,11 +226,16 @@ class MainController extends Controller
             session([
                 'id' => $user->id,
                 'type' => $user->type,
+<<<<<<< HEAD
                 'picture' => $user->picture 
+=======
+                'picture' => $user->picture // Ensure this is set correctly
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
             ]);
     
 
             if ($user->type == 'Customer') {
+<<<<<<< HEAD
            
                 return redirect('/'); 
             } 
@@ -226,6 +250,17 @@ class MainController extends Controller
             return redirect('login')->with('error', 'Invalid Credentials');
         }
 
+=======
+                return redirect('/');
+            } else if ($user->type == 'Admin') {
+                return redirect('/admin');
+            } else {
+                return redirect('login')->with('error', 'Invalid Credentials');
+            }
+        } else {
+            return redirect('login')->with('error', 'Invalid Credentials');
+        }
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
     }
 
 

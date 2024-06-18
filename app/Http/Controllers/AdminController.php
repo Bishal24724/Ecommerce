@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderItem;
+<<<<<<< HEAD
 use App\Models\VendorUser;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -52,6 +53,13 @@ class AdminController extends Controller
         }
 
     }
+=======
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+
+class AdminController extends Controller
+{
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
     public function index(){
         if(session()->get('type')=='Admin'){
             return view('Dashboard.index'); 
@@ -67,6 +75,7 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
+<<<<<<< HEAD
     public function products() {
         if(session()->get('type') == 'Admin') {
         $vendor=VendorUser::get();
@@ -81,6 +90,15 @@ class AdminController extends Controller
         return redirect()->back();
     }
     
+=======
+    public function products(){
+        if(session()->get('type')=='Admin'){
+            $products = Product::all();
+            return view('Dashboard.products', compact('products')); 
+        }
+        return redirect()->back();
+    }
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
 
     public function customers(){
         if(session()->get('type')=='Admin'){
@@ -89,7 +107,11 @@ class AdminController extends Controller
         }
         return redirect()->back();
     }
+<<<<<<< HEAD
 /*
+=======
+
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
     public function deleteProduct($id){
         if(session()->get('type')=='Admin'){
             $product = Product::find($id);
@@ -98,7 +120,10 @@ class AdminController extends Controller
         }
         return redirect()->back();
     }
+<<<<<<< HEAD
         */
+=======
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
 
     public function changeUserStatus($status, $id){
         if(session()->get('type')=='Admin'){
@@ -114,6 +139,7 @@ class AdminController extends Controller
         if(session()->get('type')=='Admin'){
             $order = Order::find($id);
             $order->status = $status;
+<<<<<<< HEAD
             
 
             if($status=='Delivered'){
@@ -132,6 +158,8 @@ class AdminController extends Controller
                
                 
             }
+=======
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
             $order->save();
             return redirect()->back()->with('success', 'Order Status Updated Successfully');
         }
@@ -147,8 +175,12 @@ class AdminController extends Controller
                 'quantity' => 'required|integer',
                 'category' => 'required|string|max:255',
                 'description' => 'required|string',
+<<<<<<< HEAD
                 'file' => 'required|file|mimes:jpeg,png,jpg,gif|max:2048',
                 'vendor'=>'required|integer'
+=======
+                'file' => 'required|file|mimes:jpeg,png,jpg,gif|max:2048'
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
             ]);
 
             $products = new Product();
@@ -160,7 +192,10 @@ class AdminController extends Controller
             $products->description = $data->input('description');
             $products->picture = $data->file('file')->getClientOriginalName();
             $data->file('file')->move('uploads/products/', $products->picture);
+<<<<<<< HEAD
             $products->vid = $data->input('vendor');
+=======
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
             $products->save();
 
             return redirect()->back()->with('success', 'New Product Added Successfully');
@@ -178,8 +213,12 @@ class AdminController extends Controller
                 'quantity' => 'required|integer',
                 'category' => 'required|string|max:255',
                 'description' => 'required|string',
+<<<<<<< HEAD
                 'file' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048',
                 'vendor'=>'nullable|integer'
+=======
+                'file' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048'
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
             ]);
 
             $products = Product::find($data->input('id'));
@@ -193,12 +232,15 @@ class AdminController extends Controller
                 $products->picture = $data->file('file')->getClientOriginalName();
                 $data->file('file')->move('uploads/products/', $products->picture);
             }
+<<<<<<< HEAD
             if($data->input('vendor')!=null)
             {
             
                   $products->vid=$data->input('vendor');
             }
           
+=======
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
 
             $products->save();
             return redirect()->back()->with('success', 'Product Updated Successfully');

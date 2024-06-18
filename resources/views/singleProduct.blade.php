@@ -71,12 +71,20 @@
                                 <i class="fa fa-star"></i>
                                 <i class="fa fa-star"></i>
                                 <i class="fa fa-star"></i>
+<<<<<<< HEAD
                                  <i class="fa fa-star-o"></i>
                             </div>
                             <h3>NRS {{$product->price}}</h3>
                             <p>{{$product->description}}</p>
                             <h4 class="mb-2">Seller Name: {{$vendor_name }}</h4>
                             <h4 class="mb-2">Seller Address: {{$vendor_address }}</h4>
+=======
+                                <i class="fa fa-star-o"></i>
+                                
+                            </div>
+                            <h3>NRS {{$product->price}}</h3>
+                            <p>{{$product->description}}</p>
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
                           <form action="{{URL::to('addToCart')}}" method="POST">
                             @csrf
                             <div class="product__details__cart__option">

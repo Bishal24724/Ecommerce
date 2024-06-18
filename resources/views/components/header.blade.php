@@ -26,7 +26,10 @@
 
     <!-- Bootstrap CSS (Optional if not included in your project) -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<<<<<<< HEAD
     
+=======
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
 
     <!-- Custom CSS -->
     <style>

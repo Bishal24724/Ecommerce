@@ -35,6 +35,7 @@
 <script src="Dashboard/js/dashboard.js"></script>
 <script src="Dashboard/js/Chart.roundedBarCharts.js"></script>
 <!-- End custom js for this page-->
+<<<<<<< HEAD
 <!-- datatable js cdn -->
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script type="text/javascript" src="jquery.dataTables.js"></script>
@@ -48,6 +49,8 @@
 } );
 
 </script>
+=======
+>>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
 </body>
 
 </html>
