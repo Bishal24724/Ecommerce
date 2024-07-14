@@ -13,7 +13,7 @@
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Css Styles -->
     <link rel="stylesheet" href="{{ URL::asset('css/bootstrap.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ URL::asset('css/font-awesome.min.css') }}" type="text/css">
@@ -26,10 +26,8 @@
 
     <!-- Bootstrap CSS (Optional if not included in your project) -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-<<<<<<< HEAD
     
-=======
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
+    
 
     <!-- Custom CSS -->
     <style>
@@ -84,7 +82,16 @@
                 </div>
                 <div class="col-lg-3 col-md-3">
                     <div class="header__nav__option d-flex align-items-center">
-                        <a href="{{ URL::to('/cart') }}"><img src="{{ URL::asset('img/icon/cart.png') }}" alt="cart"> <span></span></a>
+                        <a href="{{ URL::to('/cart') }}"><img src="{{ URL::asset('img/icon/cart.png') }}" alt="cart">  </a>
+                       
+                               {{--    
+                            @if(session()->has('id'))
+                            <sup class="itemsnumber">20</sup>
+                        
+                     
+                            
+                        @endif
+                        --}}
                         
                     </div>
                 </div>

@@ -3,21 +3,28 @@
       <div class="main-panel">
         <div class="content-wrapper">
         
-        
+          <div class="row mb-4">
+            <div class="col-lg-12">
+              <div class="">
+                  <a href="{{ URL::to('/admin')}}" class="text-black">Dashboard</a><span> >> </span>
+                  <a href="{{ URL::to('/ourOrders')}}" class="text-black">Orders</a>
+                  
+              </div>
+          </div>
          
           <div class="row">
             <div class="col-md-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
                     <p class="card-title mb-0">Our Orders</p>
+                    <div class="row">
+                      <div class="col">
+                       
+                    </div>
                    
                  
                   <div class="table-responsive">
-<<<<<<< HEAD
-                    <table id="myTable"  class="table table-striped table-borderless">
-=======
-                    <table class="table table-striped table-borderless">
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
+                    <table id="myTable"  class="table table-striped table-borderless table-responsive">
                       <thead>
                         <tr>
                           <th>Customer</th>
@@ -27,7 +34,10 @@
                           <th>Address</th>
                           <th>Order Status</th>
                           <th>Order Date </th>
+                        <th>Delivered Date</th>
                           <th>Product</th>
+                             
+                          <th>View Map </th>
                            <th>Action</th>
                         </tr>  
                       </thead>
@@ -49,6 +59,8 @@
                             <td>{{ $item->address}}</td>
                             <td class="font-weight-medium"><div class="badge badge-success">{{$item ->status}}</div></td>
                             <td class="font-weight-medium"><div class="badge badge-info">{{$item ->created_at}}</div></td>
+                            <td class="font-weight-medium"><div class="badge badge-info">{{$item ->delivered_at}}</div></td>
+                            
                             <td class="font-weight-small">
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModel{{ $i}}">
                                     Product
@@ -117,6 +129,30 @@
                                     </div>
                                   </div>
                             </td>
+        
+                            <td  class="text-center">
+                              <button type="button" class="btn fa-regular fa-eye "  style="cursor: pointer; color:blue;" data-toggle="modal" data-target="#mapModel{{ $i}}" onclick="initMap({{$item->longitude}},{{$item->latitude}})">
+                              
+                              </button>
+
+                              <div class ="modal" id="mapModel{{ $i}}"  >
+                                <div class="modal-dialog" role="document" >
+                                    <div class="modal-content" >
+                                      <div class="modal-header">
+                                        <h5 class="modal-title">Map</h5>
+                                      </div>
+                                      <div class="modal-body" >
+                                        <div id="map" style="width:100%; height:500px;"></div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                              </div>
+
+
+
+
+                            </td>
                             <td>
                                 @if($item->status == 'Paid')
                                 <a href="{{ URL::to('changeOrderStatus/Accepted/'.$item->id)}}" class="btn btn-success">Accept</a>
@@ -142,6 +178,33 @@
             </div>
           
           </div>
+         
+
+
+<script>
+
+
+
+  function initMap(long,lat) {
+      var map = new google.maps.Map(document.getElementById('map'), {
+          center: { lng: long, lat: lat },
+          zoom: 8,
+      });
+
+      var marker = new google.maps.Marker({
+          position: {  lng: long,lat: lat },
+          map: map,
+      });
+
+   
+  }
+
+
+ 
+</script>
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1KP1tF-W6uN3zd7uBmhJy-VFofp5U2UM"></script>      
+
        
         <!-- content-wrapper ends -->
         <!-- partial:partials/_footer.html -->

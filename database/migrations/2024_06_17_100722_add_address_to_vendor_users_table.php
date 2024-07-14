@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::table('vendor_users', function (Blueprint $table) {
             //
             $table->text('address');
-            $table->bigInteger('phone');
-            $table-> date('established date');
+      
             
         
         });

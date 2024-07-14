@@ -35,20 +35,42 @@
 <script src="Dashboard/js/dashboard.js"></script>
 <script src="Dashboard/js/Chart.roundedBarCharts.js"></script>
 <!-- End custom js for this page-->
-
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <!-- datatable js cdn -->
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script type="text/javascript" src="jquery.dataTables.js"></script>
 <script type="text/javascript" src="dataTables.search.html.js"></script>
 <script type="text/javascript" src="jquery.dataTables.js"></script>
 <script type="text/javascript" src="dataTables.filter.range.js"></script>
+
+
+
 <script type="text/javascript">
    $('#myTable').DataTable( {
     select: true,
     responsive: true
 } );
+$(document).ready(function() {
+    $('#select2').select2();
+    $('#brand').select2();
+    $('#type').select2();
+   
+});
+
+$(document).ready(function() {
+    $('#ucategory').select2();
+    $('#ubrand').select2();
+    $('#utype').select2();
+   
+});
+
+
+
 
 </script>
+
+
 </body>
 
 </html>

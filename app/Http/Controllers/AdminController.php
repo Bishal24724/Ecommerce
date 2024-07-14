@@ -7,12 +7,19 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderItem;
-<<<<<<< HEAD
 use App\Models\VendorUser;
+use App\Models\Category;
+use App\Models\Brand;
+use App\Models\Type;
+use App\Models\Notification;
+use App\Models\ProductSize;
+
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
-//use App\Http\Controller\VendorController;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotificationEmail;
+
 
 class AdminController extends Controller
 {
@@ -53,16 +60,21 @@ class AdminController extends Controller
         }
 
     }
-=======
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
-
-class AdminController extends Controller
-{
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
     public function index(){
         if(session()->get('type')=='Admin'){
-            return view('Dashboard.index'); 
+            $totalcustomer=User::where('type','customer')->count('id');
+            $totalorder=Order::where('status','Pending')->count();
+            $totalproduct=Product::count();
+            $totalvendor=VendorUser::count();
+            $totalcategory=Category::count();
+            $totalbrand=Brand::count();
+            $totaltype=Type::count();
+
+           
+
+
+
+            return view('Dashboard.index',compact(['totalcustomer','totalorder','totalproduct','totalvendor','totalcategory','totalbrand','totaltype'])); 
         }
         return redirect()->back();
     }
@@ -74,31 +86,28 @@ class AdminController extends Controller
         }
         return redirect()->back();
     }
+    
 
-<<<<<<< HEAD
     public function products() {
         if(session()->get('type') == 'Admin') {
-        $vendor=VendorUser::get();
-
-        
+            $vendor = VendorUser::get();
+    
             $products = Product::join('vendor_users', 'products.vid', '=', 'vendor_users.id')
+                ->with(['type','category','brand'])
                 ->select('products.*', 'vendor_users.name as vendor_name')
+                ->with('sizes')
                 ->get();
     
-            return view('Dashboard.products', compact('products','vendor')); 
+            $types = Type::all();
+            $categories = Category::all();
+            $brands = Brand::all();
+    
+            return view('Dashboard.products', compact('products', 'vendor', 'types', 'categories', 'brands'));
         }
         return redirect()->back();
     }
     
-=======
-    public function products(){
-        if(session()->get('type')=='Admin'){
-            $products = Product::all();
-            return view('Dashboard.products', compact('products')); 
-        }
-        return redirect()->back();
-    }
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
+    
 
     public function customers(){
         if(session()->get('type')=='Admin'){
@@ -107,11 +116,14 @@ class AdminController extends Controller
         }
         return redirect()->back();
     }
-<<<<<<< HEAD
+    public function vendordetail(){
+        if(session()->get('type')=='Admin'){
+     $vendors= VendorUser::all();
+            return view('Dashboard.vendordetails', compact('vendors')); 
+        }
+        return redirect()->back();
+    }
 /*
-=======
-
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
     public function deleteProduct($id){
         if(session()->get('type')=='Admin'){
             $product = Product::find($id);
@@ -120,10 +132,7 @@ class AdminController extends Controller
         }
         return redirect()->back();
     }
-<<<<<<< HEAD
         */
-=======
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
 
     public function changeUserStatus($status, $id){
         if(session()->get('type')=='Admin'){
@@ -139,11 +148,10 @@ class AdminController extends Controller
         if(session()->get('type')=='Admin'){
             $order = Order::find($id);
             $order->status = $status;
-<<<<<<< HEAD
             
 
             if($status=='Delivered'){
-                
+                $order->delivered_at=now();
                 $orderItems = OrderItem::where('orderId', $id)->get();
                foreach ($orderItems as $item) {
                 // this will search for the product where product id is match with the productId exist in the orders_items.
@@ -158,8 +166,6 @@ class AdminController extends Controller
                
                 
             }
-=======
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
             $order->save();
             return redirect()->back()->with('success', 'Order Status Updated Successfully');
         }
@@ -175,12 +181,8 @@ class AdminController extends Controller
                 'quantity' => 'required|integer',
                 'category' => 'required|string|max:255',
                 'description' => 'required|string',
-<<<<<<< HEAD
                 'file' => 'required|file|mimes:jpeg,png,jpg,gif|max:2048',
                 'vendor'=>'required|integer'
-=======
-                'file' => 'required|file|mimes:jpeg,png,jpg,gif|max:2048'
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
             ]);
 
             $products = new Product();
@@ -192,10 +194,7 @@ class AdminController extends Controller
             $products->description = $data->input('description');
             $products->picture = $data->file('file')->getClientOriginalName();
             $data->file('file')->move('uploads/products/', $products->picture);
-<<<<<<< HEAD
             $products->vid = $data->input('vendor');
-=======
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
             $products->save();
 
             return redirect()->back()->with('success', 'New Product Added Successfully');
@@ -213,12 +212,8 @@ class AdminController extends Controller
                 'quantity' => 'required|integer',
                 'category' => 'required|string|max:255',
                 'description' => 'required|string',
-<<<<<<< HEAD
                 'file' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048',
                 'vendor'=>'nullable|integer'
-=======
-                'file' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048'
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
             ]);
 
             $products = Product::find($data->input('id'));
@@ -232,15 +227,12 @@ class AdminController extends Controller
                 $products->picture = $data->file('file')->getClientOriginalName();
                 $data->file('file')->move('uploads/products/', $products->picture);
             }
-<<<<<<< HEAD
             if($data->input('vendor')!=null)
             {
             
                   $products->vid=$data->input('vendor');
             }
           
-=======
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
 
             $products->save();
             return redirect()->back()->with('success', 'Product Updated Successfully');
@@ -257,11 +249,201 @@ class AdminController extends Controller
 
             $orders = DB::table('users')
                 ->join('orders', 'orders.customerId', 'users.id')
-                ->select('orders.*', 'users.fullname', 'users.email', 'users.status as userStatus')
+                ->join('delivery_addresses','delivery_addresses.oId','orders.id')
+                ->select('orders.*', 'users.fullname', 'users.email', 'users.status as userStatus','delivery_addresses.longitude','delivery_addresses.latitude')
                 ->get();
 
             return view('Dashboard.orders', compact('orders', 'orderItems')); 
         }
         return redirect()->back();
     }
+    public function AddNewVendor(Request $data){
+        if(session()->get('type')=='Admin'){      
+            
+            $data->validate([
+                'name' => 'required|string',
+                'email' => 'required|string|email|unique:vendor_users',
+                'phone'=>'required|numeric|min:10|unique:vendor_users',
+                'password' => 'required|min:6',
+                  'address'=> 'required|string'
+
+
+            ]);
+            $vendor = new VendorUser();
+            $vendor->name = $data->input('name');
+            $vendor->email = $data->input('email');
+            $vendor->phone = $data->input('phone');                                                                                                                                                                                 
+            $vendor->password = bcrypt($data->input('password'));                       
+             $vendor->address = $data->input('address');
+             $vendor->save();                                                                                   
+             return redirect()->back()->with('success', 'Vendor Added Successfully');
+
+
+        }
+
+        }
+        public function UpdateVendor(Request $data){
+             if(session()->get('type')=='Admin'){
+                $vendor = VendorUser::find($data->input('id'));                                    
+                $data->validate([
+                       'name'=>'required|string',
+                       'email'=>'required|string|email|unique:vendor_users,email,'.$vendor->id, 
+                       'phone'=>'required|string|min:10|max:10|unique:vendor_users,email,'.$vendor->id,
+                       'address'=>'required|string'   
+                ]);
+                $vendor->name = $data->input('name');
+                $vendor->email= $data->input('email');
+                $vendor->phone=$data->input('phone');
+                $vendor->address=$data->input('address');
+                $vendor->save();       
+                return redirect()->back()->with('success','Vendor Updated Successfully');                                                                                                                                                                                                                                                                                                                                                                                      
+
+             }
+        }
+        public function deleteVendor($id){
+            $vendor=VendorUser::find($id);
+            $vendor->delete();
+            return redirect()->back()->with('success','Vendor has been delete successfully');
+            }
+
+            public function type(){
+                if(session()->has('id')){
+                    $type=Type::get();
+                    return view('Dashboard/admintype',compact('type'));
+        
+                }
+                return redirect('adminlogin');
+            }
+            public function brand(){
+                if(session()->has('id')){
+                    $brands=Brand::get();
+                    return view('Dashboard/adminBrand',compact('brands'));
+        
+                }
+                return redirect('adminlogin');
+            }
+            public function category(){
+                if(session()->has('id')){
+                    $category=Category::get();
+                    return view('Dashboard/adminCategory',compact('category'));
+        
+                }
+                return redirect('adminlogin');
+            }
+
+            public function UpdateType(Request $data){
+                if(session()->has('id')){
+                    $type=Type::find($data->input('id'));
+                    $data->validate([                               
+                        'name' => 'required|string'
+                ]);
+                $type->tname = $data->input('name');
+                $type->save();
+                return redirect()->back()->with('success','Type has been update Successfully');
+                }
+            }
+
+            public function UpdateBrand(Request $data){
+                if(session()->has('id')){
+                    $brand=Brand::find($data->input('id'));
+                    $data->validate([                               
+                        'name' => 'required|string'
+                ]);
+                $brand->bname = $data->input('name');
+                $brand->save();
+                return redirect()->back()->with('success','Brand has been update Successfully');
+                }
+            }
+            public function UpdateCategory(Request $data){
+                if(session()->has('id')){
+                    $category=Category::find($data->input('id'));
+                    $data->validate([                               
+                        'name' => 'required|string'
+                ]);
+                $category->cname = $data->input('name');
+                $category->save();
+                return redirect()->back()->with('success','Category has been update Successfully');
+                }
+            }
+            
+            public function deleteType($id){
+                if (session()->has('id')) {
+                    $type = Type::find($id);
+                    $type->delete();
+                    return redirect()->back()->with('success', 'Type Deleted Successfully');                     
+                }
+                return redirect('Adminlogin');
+            }
+            public function deleteCategory($id){
+                if (session()->has('id')) {
+                    $category = Category::find($id);
+                    $category->delete();
+                    return redirect()->back()->with('success', 'Category Deleted Successfully');                     
+                }
+                return redirect('Adminlogin');
+            }
+            public function deleteBrand($id){
+                if (session()->has('id')) {
+                    $brand = Brand::find($id);
+                    $brand->delete();
+                    return redirect()->back()->with('success', 'Brand Deleted Successfully');                     
+                }
+                return redirect('Adminlogin');
+            }
+
+            public function message(){
+                if(session()->has('id')){
+                    $notification=Notification::all();
+                    $vendors=VendorUser::all();
+                return view('Dashboard/notification',compact('notification','vendors'));
+                }
+            }
+
+            public function addMessage(Request $data){
+                if (session()->has('id')) {
+                    $data->validate([
+                       'title' => 'required|string',
+                       'message' => 'required|string',
+                    ]);
+                    $notification= new Notification();
+                    $emails= VendorUser::get('email');
+                    $notification->title=$data->input('title');
+                    $notification->message=$data->input('message');
+                    
+                    $notification->save();
+                    foreach($emails as $recipient){
+                        Mail::to($recipient)->send(new NotificationEmail($data->all()));
+                     }
+                    return redirect()->back()->with('success','New Message has been added successfully');
+                
+
+            }
+        }
+
+            public function updateMessage(Request $data){
+                if (session()->has('id')) {
+                    $notification=Notification::find($data->input('id'));
+                    $data->validate([
+                         'title'=>'required|string',
+                         'message'=>'required|string'
+                    ]);
+                    $notification->title=$data->input('title');
+                    $notification->message=$data->input('message');
+                    $notification->save();
+                    return redirect()->back()->with('success','Message has been updated successfully');
+                
+            }
+               return view('adminlogin')->with('success','Please Login First');
+
+
+        }
+        public function deleteMessage($id){
+if(session()->has('id')){
+$notification = Notification::find($id);
+$notification->delete();
+return redirect()->back()->with('success','Message has been deleted Successfully');
 }
+        }
+
+    }
+

@@ -30,7 +30,7 @@
             <div class="col-md-4 offset-md-4 logfile">
                 <div class="card mt-5">
                     <div class="card-header">
-                      Login
+                      Admin Login
                     </div>
                     <div class="card-body">
                         @if(session()->has('message'))

@@ -54,6 +54,12 @@
 <script src="{{URL::asset('js/mixitup.min.js')}}"></script>
 <script src="{{URL::asset('js/owl.carousel.min.js')}}"></script>
 <script src="{{URL::asset('js/main.js')}}"></script>
+<script>
+    var botmanWidget = {
+        introMessage: 'hello world',  
+    };
+    </script>
+ <script src='https://cdn.jsdelivr.net/npm/botman-web-widget@0/build/js/widget.js'></script>
 </body>
 
 </html>

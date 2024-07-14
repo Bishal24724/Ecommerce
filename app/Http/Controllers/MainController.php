@@ -12,6 +12,11 @@ use App\Models\Enquiry;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\Session;
 use App\Models\Product;
+use App\Models\ProductSize;
+use App\Models\Type;
+use App\Models\Brand;
+use App\Models\Category;
+Use App\Models\DeliveryAddress;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -19,13 +24,21 @@ use Illuminate\Support\Facades\Hash;
 class MainController extends Controller
 {
     public function index(){
-        $allproducts = Product::all();
-        $newArrival = Product::where('type', 'new-arrivals')->get();
-        $bestSellers = Product::where('type', 'Best Sellers')->get();
-        $hotsale = Product::where('type', 'sale')->get();
-        return view('index', compact('allproducts', 'hotsale', 'newArrival', 'bestSellers'));
+   
+        $allproducts = Product::with(['sizes','type','brand','category'])->get(); 
+        $rate=[];
+        foreach($allproducts as $product){
+            $rate=$product->price;
+        }
+        $newArrival= Type::where('tname','new-arrivals')->get();
+        $bestSellers= Type::where('tname','Best Sellers')->get();
+        $hotsale= Type::where('tname','Sale')->get();
+      
+   
+        return view('index', compact('allproducts', 'hotsale', 'newArrival', 'bestSellers','rate'));
     }
 
+/*
     public function cart(){
         $cartItems = Product::join('carts', 'carts.productId', 'products.id')
             ->select('products.title', 'products.quantity as pQuantity', 'products.price', 'products.picture', 'carts.*')
@@ -33,64 +46,96 @@ class MainController extends Controller
             ->get();
         return view('cart', compact('cartItems'));
     }
+        */
+ public function cart()
+{
+    $cartItems = DB::table('carts')
+        ->join('products', 'carts.productId', '=', 'products.id')
+        ->join('product_sizes', 'carts.sizeId', '=', 'product_sizes.id')
+        ->select('products.title', 'products.quantity as pQuantity', 'product_sizes.rate', 'products.picture', 'carts.*')
+        ->where('carts.customerId', session()->get('id'))
+        ->get();
 
-    public function checkout(Request $data){
-        if (Session::has('id')) {
-            $data->validate([
-                'bill' => 'required|numeric',
-                'address' => 'required|string|max:255',
-                'fullname' => 'required|string|max:255',
-                'phone' => 'required|string|max:10',
-            ]);
-         
-            $order = new Order();
-            $order->status = 'Pending';
-            $order->customerId = session()->get('id');
-            $order->bill = $data->input('bill');
-            $order->address = $data->input('address');
-            $order->fullname = $data->input('fullname');
-            $order->phone = $data->input('phone');
-<<<<<<< HEAD
-            $carts = Cart::where('customerId', session()->get('id'))->get();
-           foreach($carts as $cart){
-                   $product= Product::find($cart->productId);
-                  $order->vendor_id=$product->vid;
-           }
-        
-
-            if ($order->save()) {
-               
-=======
-
-            if ($order->save()) {
-                $carts = Cart::where('customerId', session()->get('id'))->get();
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
-                foreach ($carts as $item) {
-                    $product = Product::find($item->productId); 
-                    $orderItem = new OrderItem();
-                    $orderItem->productId = $item->productId;
-                    $orderItem->quantity = $item->quantity;
-                    $orderItem->price = $product->price; // Make sure to set the price correctly
-                    $orderItem->orderId = $order->id;
-<<<<<<< HEAD
-                    
-=======
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
-                   
-                    $orderItem->save();
-                    $item->delete();
-                }
-                return redirect()->back()->with('success', 'Your order has been placed successfully');
-            }
-        } else {
-            return redirect('login')->with('error', 'Please Login first');
-        }
+    // Calculate total based on rate and quantity
+    $total = 0;
+    foreach ($cartItems as $item) {
+        $total += ($item->rate * $item->quantity);
     }
 
-    public function shop(){
-        $allproducts = Product::orderBy('id', 'desc')->simplePaginate(5);
+    return view('cart', compact('cartItems', 'total'));
+}
 
-        return view('shop',compact('allproducts'));
+public function checkout(Request $data)
+{
+    if (Session::has('id')) {
+        $data->validate([
+            'bill' => 'required|numeric',
+            'address' => 'required|string|max:255',
+            'fullname' => 'required|string|max:255',
+            'phone' => 'required|string|max:10',
+            'lat'=>'required',
+            'lng'=>'required'
+        ]);
+
+        $order = new Order();
+       
+        $order->status = 'Pending';
+        $order->customerId = session()->get('id');
+        $order->bill = $data->input('bill');
+        $order->address = $data->input('address');
+        $order->fullname = $data->input('fullname');
+        $order->phone = $data->input('phone');
+
+        
+     //add the long and latitude to delivery address table
+     
+
+        // Set vendor_id for the order
+        $cartItems = Cart::where('customerId', session()->get('id'))->get();
+        if ($cartItems->isNotEmpty()) {
+            $firstProduct = Product::find($cartItems->first()->productId);
+            $order->vendor_id = $firstProduct->vid;
+        }
+
+        if ($order->save()) {
+            $deliveryAddress = new DeliveryAddress();
+            $deliveryAddress->cId = session()->get('id');
+            $deliveryAddress->longitude = $data->input('lng');
+            $deliveryAddress->latitude = $data->input('lat');
+            $deliveryAddress->oId = $order->id;
+            $deliveryAddress->save();
+            
+            foreach ($cartItems as $item) {
+                // Find the product size rate based on sizeId in the cart item
+                $productSize = ProductSize::where('id', $item->sizeId)->first();
+
+                $orderItem = new OrderItem();
+                $orderItem->productId = $item->productId;
+                $orderItem->quantity = $item->quantity;
+                $orderItem->price = $productSize ? $productSize->rate : 0; // Fallback to 0 if productSize not found
+                $orderItem->orderId = $order->id;
+
+
+                $orderItem->save();
+
+                // save deliveryaddress
+                $deliveryAddress->save();
+                $item->delete();
+            }
+            return redirect()->back()->with('success', 'Your order has been placed successfully');
+        }
+    } else {
+        return redirect('login')->with('error', 'Please Login first');
+    }
+}
+
+
+    public function shop(){
+        $allproducts = Product::with(['sizes','type'])->orderBy('id', 'desc')->simplePaginate(5);
+    $allbrand=Brand::all();
+    $allcategory=Category::all();
+    $alltype=Type::all();
+        return view('shop',compact(['allproducts','allcategory','alltype','allbrand']));
     }
 
     public function profile(){
@@ -104,7 +149,6 @@ class MainController extends Controller
     public function myOrders(){
         if (session()->has('id')) {
             $orders = Order::where('customerId', session()->get('id'))->get();
-<<<<<<< HEAD
             $orders->each(function ($order) {
                 $order->vat = 0.13 * $order->bill;
             });
@@ -113,51 +157,45 @@ class MainController extends Controller
             });
    
         
-=======
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
             $items = DB::table('products')
                 ->join('order_items', 'order_items.productId', 'products.id')
                 ->select('products.title', 'products.picture',  'order_items.*')
                 ->get();
-<<<<<<< HEAD
                      
               
                    
                    
                 
-=======
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
             return view('orders', compact('orders', 'items'));
         }
         return redirect('login');
     }
 
-    public function singleProduct($id){
-        $product = Product::find($id);
-<<<<<<< HEAD
-        $vendor = DB::table('products')
-        ->join('vendor_users', 'products.vid', '=', 'vendor_users.id')
-        ->select('vendor_users.name', 'vendor_users.address')
-        ->where('products.id', '=', $id)
-        ->first(); // Use first() instead of get() to directly get the first result
-
-    // Check if vendor data is available
-    if ($vendor) {
-        $vendor_name = $vendor->name;
-        $vendor_address = $vendor->address;
-    } else {
-        // Handle the case where no vendor was found, set default values or throw an error
-        $vendor_name = 'Vendor not found';
-        $vendor_address = 'Address not available';
-    }
+    public function singleProduct($id) {
+        // Fetch the product along with its sizes
+        $product = Product::with('sizes')->find($id);
         
-        return view('singleProduct', compact('product', 'vendor_name','vendor_address'));
-      
-        //return view('singleProduct', compact('product'));
-=======
-        return view('singleProduct', compact('product'));
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
+        // Fetch the vendor details
+        $vendor = DB::table('products')
+            ->join('vendor_users', 'products.vid', '=', 'vendor_users.id')
+            ->select('vendor_users.name', 'vendor_users.address')
+            ->where('products.id', '=', $id)
+            ->first(); 
+    
+        // Check if vendor data is available
+        if ($vendor) {
+            $vendor_name = $vendor->name;
+            $vendor_address = $vendor->address;
+        } else {
+            // Handle the case where no vendor was found, set default values or throw an error
+            $vendor_name = 'Vendor not found';
+            $vendor_address = 'Address not available';
+        }
+    
+        // Pass the product, vendor name, and vendor address to the view
+        return view('singleProduct', compact('product', 'vendor_name', 'vendor_address'));
     }
+    
 
     public function deleteCartItem($id){
         $item = Cart::find($id);
@@ -226,16 +264,11 @@ class MainController extends Controller
             session([
                 'id' => $user->id,
                 'type' => $user->type,
-<<<<<<< HEAD
                 'picture' => $user->picture 
-=======
-                'picture' => $user->picture // Ensure this is set correctly
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
             ]);
     
 
             if ($user->type == 'Customer') {
-<<<<<<< HEAD
            
                 return redirect('/'); 
             } 
@@ -250,17 +283,6 @@ class MainController extends Controller
             return redirect('login')->with('error', 'Invalid Credentials');
         }
 
-=======
-                return redirect('/');
-            } else if ($user->type == 'Admin') {
-                return redirect('/admin');
-            } else {
-                return redirect('login')->with('error', 'Invalid Credentials');
-            }
-        } else {
-            return redirect('login')->with('error', 'Invalid Credentials');
-        }
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
     }
 
 
@@ -268,13 +290,15 @@ class MainController extends Controller
         if (session()->has('id')) {
             $data->validate([
                 'quantity' => 'required|integer',
-                'id' => 'required|integer|exists:products,id'
+                'id' => 'required|integer|exists:products,id',
+                'size'=>'required|integer'
             ]);
 
             $item = new Cart();
             $item->quantity = $data->input('quantity');
             $item->productId = $data->input('id');
             $item->customerId = session()->get('id');
+            $item->sizeId= $data->input('size');
             $item->save();
 
             return redirect('shop')->with('success', 'Item Added to Cart Successfully');
@@ -369,4 +393,5 @@ class MainController extends Controller
 
 
     }
+
 }

@@ -3,7 +3,15 @@
 <div class="main-panel">
   <div class="content-wrapper">
   
-  
+  <div class="row mb-4">
+    <div class="col-lg-12">
+      <div class="">
+          <a href="{{ URL::to('/admin')}}" class="text-black">Dashboard</a><span> >> </span>
+          <a href="{{ URL::to('/ourCustomers')}}" class="text-black">Customer</a>
+          
+      </div>
+  </div>
+  </div>
    
     <div class="row">
       <div class="col-md-12 grid-margin stretch-card">
@@ -22,11 +30,7 @@
              
            
             <div class="table-responsive">
-<<<<<<< HEAD
               <table id="myTable" class="table display table-striped table-borderless">
-=======
-              <table class="table table-striped table-borderless">
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
                 <thead>
                   <tr>
                     <th>S.N</th>

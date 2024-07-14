@@ -2,7 +2,7 @@
     <!-- Hero Section Begin -->
     <section class="hero">
         <div class="hero__slider owl-carousel">
-            <div class="hero__items set-bg" data-setbg="img/hero/hero-1.jpg">
+            <div class="hero__items set-bg" data-setbg="img/hero/hero-6.jpg">
                 <div class="container">
                     <div class="row">
                         <div class="col-xl-5 col-lg-7 col-md-8">
@@ -23,7 +23,7 @@
                     </div>
                 </div>
             </div>
-            <div class="hero__items set-bg" data-setbg="img/hero/hero-2.jpg">
+            <div class="hero__items set-bg" data-setbg="img/hero/hero-4.jpg">
                 <div class="container">
                     <div class="row">
                         <div class="col-xl-5 col-lg-7 col-md-8">
@@ -104,21 +104,17 @@
             </div>
             <div class="row product__filter">
                 @foreach ($allproducts as $item)
-                <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix {{ $item->type }}">
+                <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix {{ $item->type->tname }}">
                     <div class="product__item">
                         <div class="product__item__pic set-bg" data-setbg="{{URL::asset('uploads/products/'.$item->picture)}}">
-                            <span class="label">{{ $item->type }}</span>
+                            <span class="label">{{ $item->type->tname }}</span>
                             <ul class="product__hover">
                                 <li><a href="{{URL::to('single/'.$item->id)}}"><img src="img/icon/search.png" alt=""></a></li>
                             
                         </div>
                         <div class="product__item__text">
                             <h6>{{$item->title}}</h6>
-<<<<<<< HEAD
-                            <a href="{{ URL::to('addToCart')}}"  class="add-cart">+ Add To Cart</a>
-=======
-                            <a href="{{ URL::to('AddNewProduct')}}"  class="add-cart">+ Add To Cart</a>
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
+                            <a href="{{URL::to('single/'.$item->id)}}"  class="add-cart">+ Add to Cart</a>
                             <div class="rating">
                                 <i class="fa fa-star-o"></i>
                                 <i class="fa fa-star-o"></i>
@@ -126,7 +122,12 @@
                                 <i class="fa fa-star-o"></i>
                                 <i class="fa fa-star-o"></i>
                             </div>
-                            <h5>NRS {{$item->price}}</h5>
+                            @php
+                                $rates = $item->sizes->pluck('rate');
+                                $minRate = $rates->min();
+                                $maxRate = $rates->max();
+                            @endphp
+                            <h5>NRS {{ $minRate }} - {{ $maxRate }}</h5>
                            
                         </div>
                     </div>

@@ -30,7 +30,7 @@
                         <div class="col-lg-4 col-md-6 col-sm-6">
                             <div class="product__item">
                                 <div class="product__item__pic set-bg" data-setbg="{{URL::asset('uploads/products/'.$item->picture)}}">
-                                    <span class="label">{{ $item->type }}</span>
+                                    <span class="label">{{ $item->type->tname }}</span>
                                     <ul class="product__hover">
                                        
                                         
@@ -48,7 +48,14 @@
                                         <i class="fa fa-star-o"></i>
                                         <i class="fa fa-star-o"></i>
                                     </div>
-                                    <h5> NRS {{ $item->price}}</h5>
+
+                                    {{-- calculating the min and max rate of a single product--}}
+                                    @php
+                                     $rates=$item->sizes->pluck('rate');
+                                    $min_rates=$rates->min();
+                                    $max_rates=$rates->max();
+                                     @endphp                                                                                
+                                    <h5> NRS {{ $min_rates}} - NRS {{ $max_rates}}</h5>
                                    
                                 </div>
                             </div>
@@ -69,5 +76,7 @@
             </div>
         </div>
     </section>
+      <!-- Shop Section Begin -->
+   
     <!-- Shop Section End -->
 <x-footer />

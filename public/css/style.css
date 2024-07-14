@@ -105,6 +105,19 @@ ol {
 	padding: 0;
 	margin: 0;
 }
+element.style {
+    background: rgb(206 11 0);
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: 38px;
+    right: 20px;
+    height: 60px;
+    width: 60px;
+    border: 0px;
+    border-radius: 50%;
+    box-shadow: rgb(188 166 166) 0px 0px 20px;
+}
 
 /*---------------------
   Helper CSS
@@ -646,14 +659,15 @@ ol {
 }
 
 .hero__social {
-	margin-top: 190px;
+	margin-top: 60px;
 }
 
 .hero__social a {
-	font-size: 16px;
+	font-size: 20px;
 	color: #3d3d3d;
 	display: inline-block;
-	margin-right: 32px;
+	margin-right: 10px;
+	padding: 10px;
 }
 
 .hero__social a:last-child {

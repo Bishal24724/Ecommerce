@@ -1,4 +1,4 @@
-<x-adminheader  title="Admin Profile" />
+<x-vendorheader   />
       <!-- partial -->
       <div class="main-panel">
         <div class="content-wrapper">

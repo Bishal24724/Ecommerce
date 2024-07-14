@@ -35,22 +35,64 @@
 <script src="Dashboard/js/dashboard.js"></script>
 <script src="Dashboard/js/Chart.roundedBarCharts.js"></script>
 <!-- End custom js for this page-->
-<<<<<<< HEAD
 <!-- datatable js cdn -->
+
+{{--
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.print.min.js"></script>
+
+--}}
+{{--
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+{{--<script src="https://cdn.datatables.net/2.0.8/js/jquery.dataTables.min.js"></script> 
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.print.min.js"></script>
+
+--}}
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+
+
+
+{{--
 <script type="text/javascript" src="jquery.dataTables.js"></script>
 <script type="text/javascript" src="dataTables.search.html.js"></script>
 <script type="text/javascript" src="jquery.dataTables.js"></script>
 <script type="text/javascript" src="dataTables.filter.range.js"></script>
+--}}
+
+
 <script type="text/javascript">
    $('#myTable').DataTable( {
     select: true,
     responsive: true
 } );
+$(document).ready(function() {
+    if ($.fn.DataTable.isDataTable('#myTable')) {
+        $('#myTable').DataTable().destroy();
+    }
+
+
+    $('#myTable').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'excel', 'pdf', 'print','csv'
+        ]
+    });
+});
 
 </script>
-=======
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
 </body>
 
 </html>

@@ -24,11 +24,9 @@
                                     <th>Phone</th>
                                     <th>Status</th>
                                     <th>Order Date</th>
+                                    <th>Deliver Date</th>
                                     <th>View Products</th>
-<<<<<<< HEAD
-                                    <th>Invoice/ Bill</th>
-=======
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
+                                    <th>Invoice</th>
 
                                 </tr>
                             </thead>
@@ -64,6 +62,11 @@
                                         <td>
                                             {{ $item->created_at}}
                                         </td>
+                                        <td>                                                                    
+                                            {{ $item->delivered_at}}
+                                            </td>                                                                               
+                                                                                  
+
                                               <td>
                                                 <!-- Button to Open the Modal -->
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal{{ $i}}">
@@ -136,7 +139,6 @@
     </div>
   </div>
                                               </td>
-<<<<<<< HEAD
                                               <td> 
                                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myinvoice{{ $i}}">
                                                     Invoice
@@ -306,8 +308,6 @@
                                                     </div>
                                                   </div>
                                               </td>
-=======
->>>>>>> e31fac9ad9f10a682d75292519a4f49c506267d2
                                     </tr>
                                 @endforeach
                             </tbody>

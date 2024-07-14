@@ -1,9 +1,16 @@
-<x-adminheader title="Customer" />
+<x-vendorheader :notifications="$notifications" />
 <!-- partial -->
 <div class="main-panel">
   <div class="content-wrapper">
   
-  
+    <div class="row mb-4">
+      <div class="col-lg-12">
+        <div class="">
+            <a href="{{ URL::to('/vendor')}}" class="text-black">Vendor</a><span> >> </span>
+            <a href="{{ URL::to('/adminProducts')}}" class="text-black">Customer</a>
+            
+        </div>
+    </div>
    
     <div class="row">
       <div class="col-md-12 grid-margin stretch-card">
@@ -76,4 +83,4 @@
  
   <!-- content-wrapper ends -->
   <!-- partial:partials/_footer.html -->
-<x-adminfooter />
+<x-vendorfooter />
